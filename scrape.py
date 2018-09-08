@@ -2,15 +2,12 @@
 # There are currently 395 pages of wallpapers. 
 # Downloads wallpapers in 1920x1080 resolution.
 
-
-
 from bs4 import BeautifulSoup
 import requests 
 from tqdm import tqdm
 import argparse
 
 def check_args(start, end):
-    
     if start < 0:
         return False
     if end < 0:
@@ -37,7 +34,6 @@ def main():
     BASE_URL="https://interfacelift.com/wallpaper/downloads/date/any/"
 
     for count in range(args.start, args.end + 1):
-
         print "------------------------------------------------------------PAGE " + str(count) + "------------------------------------------------------------"
         # fetch html with wallpaper links
         response = requests.get(BASE_URL + "index" + str(count) + ".html") 
@@ -66,5 +62,5 @@ def main():
 
     return 0
 
-
-main()
+if __name__ == "__main__":
+    main()
