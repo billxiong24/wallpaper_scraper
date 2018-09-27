@@ -5,7 +5,7 @@
 from bs4 import BeautifulSoup
 import requests 
 from tqdm import tqdm
-import argparse
+import base64
 
 def check_args(start, end):
     if start < 0:
@@ -65,9 +65,11 @@ def scrape(start, end):
                 ret_data += data
 
 
+            # need to encode binary to base64 so json can serialize it
+            # JSON can't serialize raw binary cuz not unicode
             file_list.append({
                 'name' : name,
-                data : ret_data
+                'data' : base64.encodestring(bytes(ret_data))
                 })
 
     return file_list
