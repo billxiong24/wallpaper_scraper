@@ -18,23 +18,26 @@ def check_args(start, end):
     
     return True
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--start", type=int, default=1, help="Page to start at.")
-    parser.add_argument("-e", "--end", type=int, default=395, help="Page to end at.")
-    args = parser.parse_args()
+def scrape(start, end):
 
-    if not check_args(args.start, args.end):
-        print "Bad arguments. Exiting..."
-        return 1
+    if start is None:
+        start = ['0']
+    if end is None:
+        end = ['395']
 
-    print "STARTING PAGE: " + str(args.start)
-    print "ENDING PAGE: " + str(args.end)
+    print("STARTING PAGE: " + start[0])
+    print("ENDING PAGE: " + end[0])
+
+    #TODO ERROR HANDLING
+    start = int(start[0])
+    end = int(end[0])
 
     BASE_URL="https://interfacelift.com/wallpaper/downloads/date/any/"
 
-    for count in range(args.start, args.end + 1):
-        print "------------------------------------------------------------PAGE " + str(count) + "------------------------------------------------------------"
+    file_list = []
+
+    for count in range(start, end + 1):
+        print( "------------------------------------------------------------PAGE " + str(count) + "------------------------------------------------------------")
         # fetch html with wallpaper links
         response = requests.get(BASE_URL + "index" + str(count) + ".html") 
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -55,12 +58,20 @@ def main():
             url = url.replace("672x420", "1920x1080")
             # streaming request to download image
             res = requests.get(url, stream=True)
+            ret_data=""
             # write image to file
-            with open(name, "wb") as handle:
-                for data in tqdm(res.iter_content(chunk_size=1024), desc="Downloading: "+url):
-                    handle.write(data)
+            for data in tqdm(res.iter_content(chunk_size=1024), desc="Downloading: "+url):
+                # handle.write(data)
+                ret_data += data
 
-    return 0
 
-if __name__ == "__main__":
-    main()
+            file_list.append({
+                'name' : name,
+                data : ret_data
+                })
+
+    return file_list
+
+
+# if __name__ == "__main__":
+    # main()
